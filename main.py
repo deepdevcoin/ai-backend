@@ -39,7 +39,6 @@ async def get_products():
     """Get all products in the catalog"""
     return {"products": PRODUCTS, "total": len(PRODUCTS)}
 
-
 @app.get("/ai-overview")
 async def ai_overview(query: str):
     """
@@ -49,15 +48,25 @@ async def ai_overview(query: str):
         raise HTTPException(status_code=400, detail="Query parameter is required")
 
     try:
-        prompt = f"""You are an intelligent, friendly AI assistant embedded within the Jasify AI marketplace.  
-    A user has just asked about: "{query}".  
+        # Prepare a concise list of product summaries for context
+        product_summaries = "\n".join([
+            f"- {p['name']} ({p['category']}): {p['description']}"
+            for p in PRODUCTS
+        ])
 
+        prompt = f"""You are an intelligent, friendly AI assistant embedded within the Jasify AI marketplace.
+A user has just asked about: "{query}".
 
-    Your task is to provide a concise, clear, and engaging summary (2-3 sentences).  
-    **Crucially, your entire response must be ONLY the summary content itself, with absolutely NO surrounding text, greetings, intros, or outros.** Make it feel like you're a knowledgeable guide, offering helpful insights as if you were part of the platform.  
-    Highlight how AI tools can directly assist the user in their specific context, emphasizing actionable benefits and real-world applications.  
-    Avoid generic or overly technical language—aim for a natural, helpful tone that makes the user feel built-in, supported, and confident in the platform."""
-            
+Here are the products available in our catalog:
+---
+{product_summaries}
+---
+
+Your task is to provide a concise, clear, and engaging summary (2-3 sentences).
+**Crucially, your entire response must be ONLY the summary content itself, with absolutely NO surrounding text, greetings, intros, or outros.**
+If the query relates to the products in the catalog, prioritize mentioning the *type of solution* or *category* we offer (e.g., "Our generative models can assist with...", or "Jasify offers tools for..."). If the query is general (like "What is AI?"), give a brief, helpful, Google-style overview.
+Aim for a natural, helpful, and concise tone, as if you were an immediate and knowledgeable guide within the platform."""
+
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
                 HF_API_URL,
@@ -88,8 +97,9 @@ async def ai_overview(query: str):
         raise HTTPException(status_code=504, detail="Request to AI service timed out")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating overview: {str(e)}")
+    
 
-
+    
 @app.get("/recommendations")
 async def get_recommendations(query: str):
     """
