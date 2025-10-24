@@ -49,11 +49,14 @@ async def ai_overview(query: str):
         raise HTTPException(status_code=400, detail="Query parameter is required")
 
     try:
-        prompt = f"""You are an AI assistant for the Jasify AI marketplace. 
-A user is searching for: "{query}"
+        prompt = f"""You are an intelligent, friendly AI assistant embedded within the Jasify AI marketplace.  
+A user has just asked about: "{query}".  
 
-Provide a concise, helpful overview (2-3 sentences) about what they're looking for and how AI tools can help them. 
-Be specific and actionable."""
+Your task is to provide a concise, clear, and engaging summary (2-3 sentences).  
+Make it feel like you're a knowledgeable guide, offering helpful insights as if you were part of the platform.  
+Highlight how AI tools can directly assist the user in their specific context, emphasizing actionable benefits and real-world applications.  
+Avoid generic or overly technical language—aim for a natural, helpful tone that makes the user feel built-in, supported, and confident in the platform."""
+
 
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
