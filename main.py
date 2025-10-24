@@ -50,14 +50,14 @@ async def ai_overview(query: str):
 
     try:
         prompt = f"""You are an intelligent, friendly AI assistant embedded within the Jasify AI marketplace.  
-A user has just asked about: "{query}".  
-
-Your task is to provide a concise, clear, and engaging summary (2-3 sentences).  
-Make it feel like you're a knowledgeable guide, offering helpful insights as if you were part of the platform.  
-Highlight how AI tools can directly assist the user in their specific context, emphasizing actionable benefits and real-world applications.  
-Avoid generic or overly technical language—aim for a natural, helpful tone that makes the user feel built-in, supported, and confident in the platform."""
+    A user has just asked about: "{query}".  
 
 
+    Your task is to provide a concise, clear, and engaging summary (2-3 sentences).  
+    **Crucially, your entire response must be ONLY the summary content itself, with absolutely NO surrounding text, greetings, intros, or outros.** Make it feel like you're a knowledgeable guide, offering helpful insights as if you were part of the platform.  
+    Highlight how AI tools can directly assist the user in their specific context, emphasizing actionable benefits and real-world applications.  
+    Avoid generic or overly technical language—aim for a natural, helpful tone that makes the user feel built-in, supported, and confident in the platform."""
+            
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
                 HF_API_URL,
